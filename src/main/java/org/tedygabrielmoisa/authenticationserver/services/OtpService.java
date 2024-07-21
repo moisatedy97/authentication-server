@@ -24,6 +24,7 @@ public class OtpService {
     public String generateOtp() throws RuntimeException {
         try {
             SecureRandom random = SecureRandom.getInstanceStrong();
+
             return String.valueOf(random.nextInt(9000) + 1000);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Problem when generating the OTP", e);

@@ -182,6 +182,7 @@ public class JwtService {
     public int extractDuration(String token) {
         Date expiration = extractExpiration(token);
         Date now = new Date();
+
         return (int) ((expiration.getTime() - now.getTime()) / 1000);
     }
 

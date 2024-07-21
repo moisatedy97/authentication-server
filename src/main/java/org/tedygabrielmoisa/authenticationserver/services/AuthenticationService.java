@@ -35,6 +35,7 @@ public class AuthenticationService {
     private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
+    private final EmailService emailService;
 
     /**
      * Authenticates a user based on the provided login details.
@@ -116,7 +117,6 @@ public class AuthenticationService {
      */
     public void saveUserOtp(User user) {
         String code = otpService.generateOtp();
-        System.out.println(code);
         Optional<Otp> dbOtp = otpRepository.findOtpByUserId(user.getId());
 
         Otp otp = dbOtp.orElseGet(() -> Otp.builder().user(user).build());
@@ -126,6 +126,15 @@ public class AuthenticationService {
         otp.setOtp(passwordEncoder.encode(code));
 
         otpRepository.save(otp);
+
+        String recipient = user.getEmail();
+        String subject = "Hello, " + user.getFirstName() + " " + user.getLastName() + " !";
+        String template = "Hello, " + user.getFirstName() + "\n\n"
+                + "Here is you One-Time-Password: " + code + "\n\n"
+                + "\n"
+                + "Have a nice day!\n\n";
+
+        emailService.sendEmail(recipient, subject, template);
     }
 
     /**
