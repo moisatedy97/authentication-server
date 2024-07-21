@@ -144,6 +144,6 @@ public class AuthenticationService {
      * @param response the HTTP response object
      */
     public void setCookieToken(String jwtToken, HttpServletResponse response) {
-        response.addHeader("Set-Cookie", "token=" + jwtToken + "; HttpOnly; SameSite=None; Path=/; Max-Age=" + jwtService.extractDuration(jwtToken));
+        response.addHeader("Set-Cookie", "token=" + jwtToken + "; HttpOnly; Path=/; Max-Age=" + jwtService.extractDuration(jwtToken));
     }
 }
