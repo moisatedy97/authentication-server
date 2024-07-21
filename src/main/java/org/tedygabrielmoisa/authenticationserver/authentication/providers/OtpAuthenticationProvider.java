@@ -16,6 +16,10 @@ import org.tedygabrielmoisa.authenticationserver.services.OtpService;
 
 import java.util.Optional;
 
+/**
+ * {@link AuthenticationProvider} implementation for OTP (One-Time Password) authentication.
+ * This provider handles authentication by validating the OTP for a given user.
+ */
 @Component
 @RequiredArgsConstructor
 public class OtpAuthenticationProvider implements AuthenticationProvider {
@@ -24,6 +28,13 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
     private final OtpService otpService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Performs authentication with the given authentication request.
+     *
+     * @param authentication the authentication request object
+     * @return a fully authenticated object including credentials if authentication is successful
+     * @throws AuthenticationException if authentication fails
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
@@ -51,6 +62,12 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
+    /**
+     * Indicates whether this provider supports the indicated authentication object.
+     *
+     * @param authentication a class of the type of authentication object this provider supports
+     * @return true if this authentication provider supports the indicated authentication object
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(OtpAuthentication.class);

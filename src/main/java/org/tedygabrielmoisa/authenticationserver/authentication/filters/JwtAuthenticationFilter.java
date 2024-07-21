@@ -18,6 +18,10 @@ import org.tedygabrielmoisa.authenticationserver.services.JwtService;
 
 import java.io.IOException;
 
+/**
+ * Filter that handles JWT authentication.
+ * It extracts the JWT token from the request, validates it, and sets the authentication in the security context.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,6 +29,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final SecurityUserDetailsService userService;
 
+    /**
+     * Filters the request for JWT authentication.
+     *
+     * @param request the servlet request
+     * @param response the servlet response
+     * @param filterChain the filter chain
+     * @throws ServletException if an error occurs during filtering
+     * @throws IOException if an error occurs during IO operations
+     */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = authenticationService.getJwtToken(request.getHeader("Authorization"));
@@ -36,6 +49,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Determines if the filter should be applied to the request.
+     *
+     * @param request the servlet request
+     * @return true if the filter should not be applied, false otherwise
+     * @throws ServletException if an error occurs during filtering
+     */
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
         try {
@@ -47,6 +67,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Authenticates the JWT token.
+     *
+     * @param request the servlet request
+     * @param token the JWT token
+     * @throws IOException if an error occurs during authentication
+     */
     private void authenticateToken(HttpServletRequest request, String token) throws IOException {
         final String subject = jwtService.extractJwtSubject(token);
 
@@ -64,6 +91,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Sets the authentication info in the security context.
+     *
+     * @param request the servlet request
+     * @param userDetails the user details
+     */
     private void setAuthentication(HttpServletRequest request, UserDetails userDetails) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,

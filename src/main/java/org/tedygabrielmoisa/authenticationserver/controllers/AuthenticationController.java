@@ -20,15 +20,26 @@ import org.tedygabrielmoisa.authenticationserver.services.JwtService;
 
 import java.util.Optional;
 
+/**
+ * REST controller for handling authentication and user-related requests.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
+
   private final JwtService jwtService;
   private final AuthenticationService authenticationService;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
+  /**
+   * Handles login requests.
+   *
+   * @param loginUserDto the user login details
+   * @param response the HTTP servlet response
+   * @return a {@link ResponseEntity} with the login response details
+   */
   @GetMapping(value = "/login")
   public ResponseEntity<LoginResDto> login(@Valid LoginUserDto loginUserDto, HttpServletResponse response) {
     Authentication authentication = authenticationService.authenticate(loginUserDto);
@@ -56,6 +67,12 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).build();
   }
 
+  /**
+   * Handles user registration requests.
+   *
+   * @param registerUserDto the user registration details
+   * @return a {@link ResponseEntity} indicating the result of the registration
+   */
   @PostMapping(value = "/register")
   public ResponseEntity<LoginResDto> register(@RequestBody @Valid RegisterUserDto registerUserDto) {
     User user = User.builder()
@@ -74,6 +91,12 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpServletResponse.SC_CREATED).build();
   }
 
+  /**
+   * Checks if the user is authenticated.
+   *
+   * @param response the HTTP servlet response
+   * @return a {@link ResponseEntity} with the authentication check response
+   */
   @GetMapping(value = "/checkAuthenticated")
   public ResponseEntity<LoginResDto> checkAuthenticated(HttpServletResponse response) {
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -92,6 +115,12 @@ public class AuthenticationController {
     return processAuthenticatedUser(currentUser, response);
   }
 
+  /**
+   * Handles user logout requests.
+   *
+   * @param request the HTTP servlet request
+   * @return a {@link ResponseEntity} indicating the result of the logout
+   */
   @GetMapping(value = "/logout")
   public ResponseEntity<HttpServletResponse> logout(HttpServletRequest request) {
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -114,6 +143,13 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpServletResponse.SC_ACCEPTED).build();
   }
 
+  /**
+   * Processes the authenticated user and generates the response.
+   *
+   * @param currentUser the authenticated user
+   * @param response the HTTP servlet response
+   * @return a {@link ResponseEntity} with the login response details
+   */
   private ResponseEntity<LoginResDto> processAuthenticatedUser(User currentUser, HttpServletResponse response) {
     String jwtToken = jwtService.generateJwtToken(currentUser);
     String jwtRefreshToken = jwtService.generateJwtRefreshToken(currentUser);

@@ -12,12 +12,22 @@ import org.tedygabrielmoisa.authenticationserver.authentication.filters.JwtAuthe
 import org.tedygabrielmoisa.authenticationserver.authentication.filters.JwtRefreshAuthenticationFilter;
 import org.tedygabrielmoisa.authenticationserver.enums.Role;
 
+/**
+ * Configuration class for setting up the security filters and authorization rules.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtRefreshAuthenticationFilter jwtRefreshAuthenticationFilter;
 
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http the {@link HttpSecurity} object to configure
+     * @return the configured {@link SecurityFilterChain}
+     * @throws Exception if an error occurs while setting up the security filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

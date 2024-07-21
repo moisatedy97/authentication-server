@@ -19,11 +19,16 @@ import org.tedygabrielmoisa.authenticationserver.repositories.TokenRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Service responsible for handling authentication-related operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+
     @Value("${application.security.otp.longevity}")
     private long otpLongevity;
+
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
@@ -31,6 +36,12 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
 
+    /**
+     * Authenticates a user based on the provided login details.
+     *
+     * @param loginUserDto the login details including email, password, and/or OTP
+     * @return the authentication object if authentication is successful, null otherwise
+     */
     public Authentication authenticate(LoginUserDto loginUserDto) {
         if (loginUserDto.getOtp() == null && !loginUserDto.getPassword().isEmpty()) {
             return authenticationManager.authenticate(
@@ -47,6 +58,12 @@ public class AuthenticationService {
         return null;
     }
 
+    /**
+     * Extracts the JWT token from the authorization header.
+     *
+     * @param header the authorization header containing the JWT token
+     * @return the extracted JWT token, or null if the header is invalid
+     */
     public String getJwtToken(String header) {
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
@@ -55,6 +72,11 @@ public class AuthenticationService {
         return null;
     }
 
+    /**
+     * Revokes all valid tokens associated with the specified user.
+     *
+     * @param user the user whose tokens need to be revoked
+     */
     public void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
 
@@ -70,6 +92,12 @@ public class AuthenticationService {
         tokenRepository.saveAll(validUserTokens);
     }
 
+    /**
+     * Saves a new JWT token for the specified user.
+     *
+     * @param user     the user for whom the token is to be saved
+     * @param jwtToken the JWT token to be saved
+     */
     public void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -81,6 +109,11 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
+    /**
+     * Generates and saves a new OTP for the specified user.
+     *
+     * @param user the user for whom the OTP is to be generated
+     */
     public void saveUserOtp(User user) {
         String code = otpService.generateOtp();
         System.out.println(code);
@@ -95,7 +128,12 @@ public class AuthenticationService {
         otpRepository.save(otp);
     }
 
-    // TODO: change secure to true in production and remove domain
+    /**
+     * Sets the JWT token as a cookie in the response.
+     *
+     * @param jwtToken the JWT token to be set as a cookie
+     * @param response the HTTP response object
+     */
     public void setCookieToken(String jwtToken, HttpServletResponse response) {
         response.addHeader("Set-Cookie", "token=" + jwtToken + "; HttpOnly; Path=/; Max-Age=" + jwtService.extractDuration(jwtToken));
     }

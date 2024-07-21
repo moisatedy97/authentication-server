@@ -3,6 +3,9 @@ package org.tedygabrielmoisa.authenticationserver.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity class representing a token.
+ */
 @Entity
 @Getter
 @Setter
@@ -10,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token {
+
   /**
    * The unique identifier for the token.
    */
