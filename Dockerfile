@@ -1,8 +1,9 @@
-FROM tomcat:latest
+FROM tomcat:10.0.27-jdk17
 
-RUN rm -rf /usr/local/tomcat/webapps/*
-ADD build/libs/authentication-server-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
+WORKDIR /usr/local/tomcat/webapps/
 
-EXPOSE 8081
+COPY build/libs/*.war authentication-server.war
+
+EXPOSE 8080
 
 CMD ["catalina.sh", "run"]
