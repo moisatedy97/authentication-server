@@ -55,11 +55,12 @@ jobs:
       - name: Connect to Server and Deploy
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            docker stop spring-boot-container || true
-            docker rm spring-boot-container || true
+            docker stop authentication-server-container || true
+            docker rm authentication-server-container || true
             docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} || true
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             docker run -d \
+              -e SPRING_ORIGIN=${{ secrets.SPRING_ORIGIN }} \
               -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
               -e DB_SOURCE=${{ secrets.DB_SOURCE }} \
               -e DB_DRIVER=${{ secrets.DB_DRIVER }} \
