@@ -41,12 +41,14 @@ public class Otp {
     /**
      * The time when the OTP was created.
      */
+    @Builder.Default
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     /**
      * The time when the OTP expires.
      */
+    @Builder.Default
     @Column(nullable = false)
     private LocalDateTime expiresAt = LocalDateTime.now();
 }
