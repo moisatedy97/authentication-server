@@ -39,3 +39,7 @@ out/
 ### Environment ###
 .env
 .env.properties
+
+### Apple ###
+.DS_Store
+src/.DS_Store
